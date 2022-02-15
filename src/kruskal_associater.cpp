@@ -32,7 +32,7 @@ KruskalAssociater::KruskalAssociater(const SkelType& type, const std::map<std::s
 void KruskalAssociater::CalcBoneNodes()
 {
 	const SkelDef& def = GetSkelDef(m_type);
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (int pafIdx = 0; pafIdx < def.pafSize; pafIdx++) {
 		const int jaIdx = def.pafDict(0, pafIdx);
 		const int jbIdx = def.pafDict(1, pafIdx);
@@ -50,7 +50,7 @@ void KruskalAssociater::CalcBoneNodes()
 void KruskalAssociater::CalcBoneEpiEdges()
 {
 	const SkelDef& def = GetSkelDef(m_type);
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (int pafIdx = 0; pafIdx < def.pafSize; pafIdx++) {
 		const Eigen::Vector2i jIdxPair = def.pafDict.col(pafIdx).transpose();
 		for (int viewA = 0; viewA < m_cams.size() - 1; viewA++) {
@@ -89,7 +89,7 @@ void KruskalAssociater::CalcBoneEpiEdges()
 void KruskalAssociater::CalcBoneTempEdges()
 {
 	const SkelDef& def = GetSkelDef(m_type);
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (int pafIdx = 0; pafIdx < def.pafSize; pafIdx++) {
 		const Eigen::Vector2i jIdxPair = def.pafDict.col(pafIdx).transpose();
 		for (int view = 0; view < m_cams.size(); view++) {
@@ -118,7 +118,7 @@ void KruskalAssociater::EnumCliques(std::vector<BoneClique>& cliques)
 	const SkelDef& def = GetSkelDef(m_type);
 
 	std::vector<std::vector<BoneClique>> tmpCliques(def.pafSize);
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (int pafIdx = 0; pafIdx < def.pafSize; pafIdx++) {
 		const auto jIdxPair = def.pafDict.col(pafIdx);
 		const auto& nodes = m_boneNodes[pafIdx];

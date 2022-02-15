@@ -35,7 +35,7 @@ float Associater::Line2LineDist(const Eigen::Vector3f& pA, const Eigen::Vector3f
 void Associater::Initialize()
 {
 	const SkelDef& def = GetSkelDef(m_type);
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (int jIdx = 0; jIdx < def.jointSize; jIdx++)
 		for (int view = 0; view < m_cams.size(); view++)
 			m_assignMap[view][jIdx].setConstant(m_detections[view].joints[jIdx].cols(), -1);
@@ -49,7 +49,7 @@ void Associater::Initialize()
 void Associater::CalcJointRays()
 {
 	const SkelDef& def = GetSkelDef(m_type);
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (int view = 0; view < m_cams.size(); view++) {
 		const Camera& cam = std::next(m_cams.begin(), view)->second;
 		for (int jIdx = 0; jIdx < def.jointSize; jIdx++) {
@@ -66,7 +66,7 @@ void Associater::CalcPafEdges()
 {
 	const SkelDef& def = GetSkelDef(m_type);
 	if (m_normalizeEdges) {
-#pragma omp parallel for
+//#pragma omp parallel for
 		for (int pafIdx = 0; pafIdx < def.pafSize; pafIdx++) {
 			const Eigen::Vector2i jIdxPair = def.pafDict.col(pafIdx).transpose();
 			for (auto&& detection : m_detections) {
@@ -88,7 +88,7 @@ void Associater::CalcPafEdges()
 void Associater::CalcEpiEdges()
 {
 	const SkelDef& def = GetSkelDef(m_type);
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (int jIdx = 0; jIdx < def.jointSize; jIdx++) {
 		auto camAIter = m_cams.begin();
 		for (int viewA = 0; viewA < m_cams.size() - 1; viewA++, camAIter++) {
@@ -105,6 +105,11 @@ void Associater::CalcEpiEdges()
 						for (int jbCandiIdx = 0; jbCandiIdx < epi.cols(); jbCandiIdx++) {
 							const float dist = Line2LineDist(
 								camAIter->second.eiPos, raysA.col(jaCandiIdx), camBIter->second.eiPos, raysB.col(jbCandiIdx));
+							//float result = Line2LineDist(Eigen::Vector3f(-1.58644918, -2.10946822, 1.1042104),
+							//	Eigen::Vector3f(-0.80562839, -0.58856537, 0.06748114),
+							//	Eigen::Vector3f(-3.51239159, 0.31147795, 0.96454859),
+							//	Eigen::Vector3f(-0.9630394, 0.23251264, -0.13598895));
+							//std::cout << result;
 							if (dist < m_maxEpiDist)
 								epi(jaCandiIdx, jbCandiIdx) = 1.f - dist / m_maxEpiDist;
 						}
@@ -131,7 +136,7 @@ void Associater::CalcEpiEdges()
 void Associater::CalcTempEdges()
 {
 	const SkelDef& def = GetSkelDef(m_type);
-#pragma omp parallel for
+//#pragma omp parallel for
 	for (int jIdx = 0; jIdx < def.jointSize; jIdx++) {
 		auto camIter = m_cams.begin();
 		for (int view = 0; view < m_cams.size(); view++, camIter++) {

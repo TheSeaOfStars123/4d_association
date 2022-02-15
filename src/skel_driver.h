@@ -8,6 +8,7 @@
 
 std::vector<std::map<int, Eigen::Matrix4Xf>> ParseSkels(const std::string& filename);
 void SerializeSkels(const std::vector<std::map<int, Eigen::Matrix4Xf>>& skels, const std::string& filename);
+void WriteSkelToJson(const std::map<int, Eigen::Matrix4Xf>& skel, const std::string& filename);
 
 
 struct SkelParam

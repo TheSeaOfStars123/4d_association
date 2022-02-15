@@ -4,6 +4,7 @@
 #include <filesystem>
 #include "skel_driver.h"
 #include "math_util.h"
+#include <json/json.h>
 
 
 std::vector<std::map<int, Eigen::Matrix4Xf>> ParseSkels(const std::string& filename)
@@ -56,6 +57,38 @@ void SerializeSkels(const std::vector<std::map<int, Eigen::Matrix4Xf>>& skels, c
 	fs.close();
 }
 
+void WriteSkelToJson(const std::map<int, Eigen::Matrix4Xf >& skel, const std::string& filename)
+{
+	//const SkelDef& def = GetSkelDef(SKEL19);
+	Json::Value vec(Json::arrayValue);
+	Json::Value item;
+
+	for (const auto& _skel : skel) {
+		item["id"] = _skel.first;
+		Json::Value kp3d(Json::arrayValue);
+		//std::cout <<"_skel的大小为："<< _skel.second.cols() << std::endl;
+		for (int jIdx = 0; jIdx < _skel.second.cols(); jIdx++) {
+			//std::cout << _skel.second.col(jIdx) << std::endl;
+			const float* point = _skel.second.col(jIdx).data();
+			Json::Value kp3d_joint(Json::arrayValue);
+			for (int i = 0; i < 4; i++) {
+				kp3d_joint.append(Json::Value(point[i]));
+			}
+			kp3d.append(kp3d_joint);
+			kp3d_joint.clear();
+		}
+		item["keypoints3d"] = kp3d;
+		vec.append(item);
+		kp3d.clear();
+	}
+	vec.toStyledString();
+	std::string out = vec.toStyledString();
+	std::ofstream fs(filename);
+	fs << out;
+	fs.close();
+	//std::cout << out << std::endl;
+
+}
 
 SkelDriver::SkelDriver(const SkelType& _type, const std::string& modelPath)
 {

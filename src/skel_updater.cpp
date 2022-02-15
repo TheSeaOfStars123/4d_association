@@ -75,6 +75,7 @@ void SkelFittingUpdater::Update(const std::map<int, Eigen::Matrix3Xf>& skels2d, 
 		if (pIdx < prevCnt) {
 			SkelInfo& info = infoIter->second;
 			Eigen::Matrix4Xf& skel = m_skels.find(infoIter->first)->second;
+			//std::cout << "count(corrIter.conf > 0 ): " << float((corrIter->second.row(2).array() > FLT_EPSILON).count()) << std::endl;
 			const float active = std::min(info.active + m_activeRate * (2.f * MathUtil::Welsch(
 				float(m_minTrackJCnt), float((corrIter->second.row(2).array() > FLT_EPSILON).count())) - 1.f), 1.f);
 			if (info.active < FLT_EPSILON) {

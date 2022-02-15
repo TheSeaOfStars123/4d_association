@@ -49,7 +49,7 @@ inline const SkelDef& GetSkelDef(const SkelType& type)
 		_skelDefs[SKEL19].shapeSize = 10;
 		_skelDefs[SKEL19].pafDict.resize(2, 18);
 		_skelDefs[SKEL19].pafDict << 1, 2, 7, 0, 0, 3, 8, 1, 5, 11, 5, 1, 6, 12, 6, 1, 14, 13,
-			0, 7, 13, 2, 3, 8, 14, 5, 11, 15, 9, 6, 12, 16, 10, 4, 17, 18;
+									0, 7, 13, 2, 3, 8, 14, 5, 11, 15, 9, 6, 12, 16, 10, 4, 17, 18;
 		_skelDefs[SKEL19].parent.resize(19);
 		_skelDefs[SKEL19].parent << -1, 0, 0, 0, 1, 1, 1, 2, 3, 4, 4, 5, 6, 7, 8, 11, 12, 14, 13;
 		_skelDefs[SKEL19].hierarchyMap.resize(19);
@@ -98,7 +98,7 @@ inline const SkelDef& GetSkelDef(const SkelType& type)
 		_skelDefs[COCO18].shapeSize = 10;
 		_skelDefs[COCO18].pafDict.resize(2, 19);
 		_skelDefs[COCO18].pafDict << 1, 8, 9, 1, 11, 12, 1, 2, 3, 2, 1, 5, 6, 5, 1, 0, 0, 14, 15,
-			8, 9, 10, 11, 12, 13, 2, 3, 4, 16, 5, 6, 7, 17, 0, 14, 15, 16, 17;
+									8, 9, 10, 11, 12, 13, 2, 3, 4, 16, 5, 6, 7, 17, 0, 14, 15, 16, 17;
 		_skelDefs[COCO18].drawBone.resize(2, 18);
 		_skelDefs[COCO18].drawBone << 0, 0, 0, 1, 1, 2, 2, 3, 5, 5, 6, 8, 8, 9, 11, 12, 14, 15,
 			1, 14, 15, 2, 5, 3, 8, 4, 6, 11, 7, 9, 11, 10, 12, 13, 16, 17;

@@ -153,6 +153,79 @@ std::vector<Eigen::Matrix3Xf> OpenposeDetection::Associate(const int& jcntThresh
 	return skels;
 }
 
+void ParseDetectionsByFrames(const std::string& filename, std::vector<std::vector<OpenposeDetection>>& seqDetections, const SkelType& type, cv::Size imgSize)
+{
+	std::cout << filename << std::endl;
+	// 对于每一帧的txt文件
+	std::ifstream fs(filename);
+	if (!fs.is_open()) {
+		std::cerr << "file not exist: " << filename << std::endl;
+		std::abort();
+	}
+	const SkelDef& def = GetSkelDef(type);
+	for (std::vector<OpenposeDetection>& detections : seqDetections) {
+		OpenposeDetection detection(type);
+		for (int jIdx = 0; jIdx < def.jointSize; jIdx++) {
+			int jSize;
+			fs >> jSize;
+			detection.joints[jIdx].resize(3, jSize);
+			for (int i = 0; i < 3; i++)
+				for (int j = 0; j < jSize; j++) {
+					fs >> detection.joints[jIdx](i, j);
+					if (i == 0) 
+						detection.joints[jIdx](i, j) *= (imgSize.width - 1);
+					if (i == 1)
+						detection.joints[jIdx](i, j) *= (imgSize.height - 1);
+				}
+		}
+		for (int pafIdx = 0; pafIdx < def.pafSize; pafIdx++) {
+			const int jAIdx = def.pafDict(0, pafIdx);
+			const int jBIdx = def.pafDict(1, pafIdx);
+			detection.pafs[pafIdx].resize(detection.joints[jAIdx].cols(), detection.joints[jBIdx].cols());
+			for (int i = 0; i < detection.pafs[pafIdx].rows(); i++)
+				for (int j = 0; j < detection.pafs[pafIdx].cols(); j++)
+					fs >> detection.pafs[pafIdx](i, j);
+
+			detection.pafs[pafIdx] = detection.pafs[pafIdx].array().pow(0.2f);
+		}
+		detections.push_back(detection);
+	}
+	fs.close();
+}
+//void ParseDetectionsByFrames(char* data, std::vector<std::vector<OpenposeDetection>>& seqDetections, const SkelType& type, cv::Size imgSize)
+//{
+//	std::cout << data << std::endl;
+//	std::string s = data;
+//	std::stringstream ss(s);
+//	const SkelDef& def = GetSkelDef(type);
+//	for (std::vector<OpenposeDetection>& detections : seqDetections) {
+//		OpenposeDetection detection(type);
+//		for (int jIdx = 0; jIdx < def.jointSize; jIdx++) {
+//			int jSize;
+//			ss >> jSize;
+//			detection.joints[jIdx].resize(3, jSize);
+//			for (int i = 0; i < 3; i++)
+//				for (int j = 0; j < jSize; j++) {
+//					ss >> detection.joints[jIdx](i, j);
+//					if (i == 0)
+//						detection.joints[jIdx](i, j) *= (imgSize.width - 1);
+//					if (i == 1)
+//						detection.joints[jIdx](i, j) *= (imgSize.height - 1);
+//				}
+//		}
+//		for (int pafIdx = 0; pafIdx < def.pafSize; pafIdx++) {
+//			const int jAIdx = def.pafDict(0, pafIdx);
+//			const int jBIdx = def.pafDict(1, pafIdx);
+//			detection.pafs[pafIdx].resize(detection.joints[jAIdx].cols(), detection.joints[jBIdx].cols());
+//			for (int i = 0; i < detection.pafs[pafIdx].rows(); i++)
+//				for (int j = 0; j < detection.pafs[pafIdx].cols(); j++)
+//					ss >> detection.pafs[pafIdx](i, j);
+//
+//			detection.pafs[pafIdx] = detection.pafs[pafIdx].array().pow(0.2f);
+//		}
+//		detections.push_back(detection);
+//	}
+//}
 
 std::vector<OpenposeDetection> ParseDetections(const std::string& filename)
 {

@@ -4,10 +4,11 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IncludePath>C:\cppmodule\opencv\include;$(IncludePath)</IncludePath>
+    <_PropertySheetDisplayName>opencv_debug</_PropertySheetDisplayName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>C:\cppmodule\opencv\lib\opencv_world440.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>C:\cppmodule\opencv\lib\opencv_world420d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

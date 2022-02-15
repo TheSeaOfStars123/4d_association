@@ -77,7 +77,6 @@ void Camera::Rectify()
 		originK, distCoeff, cv::Mat(), cvK, imgSize, CV_32FC1, rectifyMapX, rectifyMapY);
 }
 
-
 void Camera::CV2Eigen()
 {
 	cvKi = cvK.inv();

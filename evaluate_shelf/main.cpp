@@ -7,7 +7,7 @@
 
 
 // #define SAVE_RESULT
-#define RUN_OLD_VERSION
+//#define RUN_OLD_VERSION
 
 
 Eigen::Matrix4Xf MappingToShelf(const Eigen::Matrix4Xf& skel19)
@@ -68,20 +68,20 @@ void PrintEvaluation(const std::vector<Eigen::VectorXi>& correctJCnt) {
 int main()
 {
 	// init
-	std::map<std::string, Camera> cams = ParseCameras("../data/shelf/calibration.json");
+	std::map<std::string, Camera> cams = ParseCameras("../../4d_association_data/shelf/calibration.json");
 	Eigen::Matrix3Xf projs(3, cams.size() * 4);
 	std::vector<cv::VideoCapture> videos(cams.size());
 	std::vector<cv::Mat> rawImgs(cams.size());
 	std::vector<std::vector<OpenposeDetection>> seqDetections(cams.size());
-	std::vector<std::map<int, Eigen::Matrix4Xf>> gt = ParseSkels("../data/shelf/gt.txt");
+	std::vector<std::map<int, Eigen::Matrix4Xf>> gt = ParseSkels("../../4d_association_data/shelf/gt.txt");
 	std::vector<std::map<int, Eigen::Matrix4Xf>> skels;
 
 #pragma omp parallel for
 	for (int i = 0; i < cams.size(); i++) {
 		auto iter = std::next(cams.begin(), i);
-		videos[i] = cv::VideoCapture("../data/shelf/video/" + iter->first + ".mp4");
+		videos[i] = cv::VideoCapture("../../4d_association_data/shelf/video/" + iter->first + ".mp4");
 		projs.middleCols(4 * i, 4) = iter->second.eiProj;
-		seqDetections[i] = ParseDetections("../data/shelf/detection/" + iter->first + ".txt");
+		seqDetections[i] = ParseDetections("../../4d_association_data/shelf/detection/" + iter->first + ".txt");
 		cv::Size imgSize(int(videos[i].get(cv::CAP_PROP_FRAME_WIDTH)), int(videos[i].get(cv::CAP_PROP_FRAME_HEIGHT)));
 		for (auto&&detection : seqDetections[i]) {
 			for (auto&& joints : detection.joints) {
@@ -106,9 +106,9 @@ int main()
 	associater.SetNormalizeEdge(true);			// new feature
 
 #ifdef RUN_OLD_VERSION
-	SkelFittingUpdater skelUpdater(SKEL19, "../data/skel/SKEL19_old");
+	SkelFittingUpdater skelUpdater(SKEL19, "../../4d_association_data/skel/SKEL19_OLD");
 #else
-	SkelFittingUpdater skelUpdater(SKEL19, "../data/skel/SKEL19");
+	SkelFittingUpdater skelUpdater(SKEL19, "../../4d_association_data/skel/SKEL19");
 #endif
 	skelUpdater.SetTriangulateThresh(0.05f);
 	skelUpdater.SetMinTrackCnt(5);
@@ -202,7 +202,7 @@ int main()
 #endif
 
 	}
-	SerializeSkels(skels, "../data/shelf/skel.txt");
+	SerializeSkels(skels, "../../4d_association_output/shelf/skel_evaluate_skel_old.txt");
 	for (const auto& pair : correctJCnt) {
 		std::cout << "identity: " << pair.first << std::endl;
 		PrintEvaluation(pair.second);
